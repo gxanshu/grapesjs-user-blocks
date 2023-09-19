@@ -1,8 +1,8 @@
 import { Editor } from "grapesjs";
 import html2canvas from "html2canvas";
-import { onSubmit } from "./function";
+import { onSubmit, getBlocksFromLocalStorage } from "./function";
 
-export default function customSaveModal(editor: Editor): any {
+export function customSaveModal(editor: Editor): any {
   const selectedComponent = editor.getSelected();
   // Get the Modal module
   const modal = editor.Modal;
@@ -26,17 +26,29 @@ export default function customSaveModal(editor: Editor): any {
                     </div>
                   </div>
                 </div>
-              </div>                       
+              </div>
 `;
 
-  // Create the modal
-  const myModal = modal.open({
-    content,
-    title: "Save",
-    width: "400px",
-    height: "auto",
-    closedOnEscape: true,
-    closedOnClickOutside: true,
+
+// Create the modal
+const myModal = modal.open({
+  content,
+  title: "Save",
+  width: "400px",
+  height: "auto",
+  closedOnEscape: true,
+  closedOnClickOutside: true,
+});
+
+  const submitButton = document.getElementById("submit") as HTMLButtonElement;
+  submitButton?.addEventListener("click", handleSubmit);
+
+  const resetButton = document.getElementById("reset") as HTMLButtonElement;
+  resetButton?.addEventListener("click", handleReset);
+
+  myModal.onceClose(() => {
+    submitButton?.removeEventListener('click', handleSubmit);
+    resetButton?.removeEventListener('click', handleReset);
   });
 
   /* functioning of modal */
@@ -47,9 +59,7 @@ export default function customSaveModal(editor: Editor): any {
     document.getElementById("screenShotCanvas")?.appendChild(canvas);
   });
 
-  // onsaving function
-
-  document.getElementById("submit")?.addEventListener("click", () => {
+  function handleSubmit() {
     const nameBlock = document.getElementById(
       "component-name"
     ) as HTMLInputElement;
@@ -63,7 +73,23 @@ export default function customSaveModal(editor: Editor): any {
     };
 
     onSubmit({ selectedComponent, editor, details, myModal });
-  });
+  }
+
+  function handleReset() {
+    const nameBlock = document.getElementById(
+      "component-name"
+    ) as HTMLInputElement;
+    const categoryBlock = document.getElementById(
+      "component-category"
+    ) as HTMLInputElement;
+
+    nameBlock.value = "";
+    categoryBlock.value = "";
+  }
 
   return myModal;
+}
+
+export function customEditModal(editor: Editor) {
+  const blocks = getBlocksFromLocalStorage();
 }
