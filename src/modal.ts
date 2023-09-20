@@ -30,15 +30,15 @@ export function customSaveModal(editor: Editor): any {
 `;
 
 
-// Create the modal
-const myModal = modal.open({
-  content,
-  title: "Save",
-  width: "400px",
-  height: "auto",
-  closedOnEscape: true,
-  closedOnClickOutside: true,
-});
+  // Create the modal
+  const myModal = modal.open({
+    content,
+    title: "Save",
+    width: "400px",
+    height: "auto",
+    closedOnEscape: true,
+    closedOnClickOutside: true,
+  });
 
   const submitButton = document.getElementById("submit") as HTMLButtonElement;
   submitButton?.addEventListener("click", handleSubmit);
@@ -91,5 +91,45 @@ const myModal = modal.open({
 }
 
 export function customEditModal(editor: Editor) {
-  const blocks = getBlocksFromLocalStorage();
+  const modal = editor.Modal;
+  const list = getBlocksFromLocalStorage();
+  const content = `<div class="modal">
+  <div class="modal-content">
+  ${Object.entries(list).map(([category, blocks]) => {
+    return `<h4>${category}</h4>
+  <ul>
+    ${Object.entries(blocks as any).map(([blockName]) => {
+      return `<li><input class="name-input" type="text" value="${blockName}"/><button class="save-button" data-block-id="${blockName}">Save</button><button>Delete</button></li>`;
+    }).join('\n\t')}
+  </ul>`;
+  }).join('  ')}
+  </div>
+</div>`;
+  const myModal = modal.open({
+    content,
+    title: "Edit",
+    width: "400px",
+    height: "auto",
+    closedOnEscape: true,
+    closedOnClickOutside: true,
+  });
+
+
+  setTimeout(() => {
+    const submitButton = document.querySelectorAll(".save-button");
+    submitButton.forEach(elem => {
+      elem.addEventListener("click", handleSubmit);
+    });
+  }, 1)
+  myModal.onceClose(() => {
+    const submitButton = document.querySelectorAll(".save-button");
+    submitButton.forEach((elem) => {
+      elem.removeEventListener("click", handleSubmit);
+    });
+  });
+
+  function handleSubmit(e: any) {
+    const blockId = e.target.dataset.blockId;
+    const nameInput = e.target.previousElementSibling.value;
+  }
 }

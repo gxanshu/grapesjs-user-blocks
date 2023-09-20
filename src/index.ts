@@ -5,6 +5,7 @@ import { loadAllBlocksFromLocalStorage } from './function'
 export default (editor: Editor): void => {
   const dc = editor.DomComponents
   const BlockManager = editor.Blocks
+  const Commands = editor.Commands
 
   const commandAddBlock = 'block-adder'
   const commandEditBlocks = 'blocks-editor'
@@ -43,4 +44,8 @@ export default (editor: Editor): void => {
       view: oldView
     })
   })
+
+  Commands.add(commandEditBlocks, { run: customEditModal })
+
+  editor.runCommand(commandEditBlocks)
 }
