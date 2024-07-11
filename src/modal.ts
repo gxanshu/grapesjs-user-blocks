@@ -105,45 +105,43 @@ export function customEditModal(editor: Editor) {
   const userBlocks = new UserBlocks(editor)
   const list = userBlocks.blocks;
   const content = `<div class="modal">
-  <div class="modal-content gjs-sm-properties" style="display: block">
+  <form id="saveAllForm" class="modal-content gjs-sm-properties" style="display: block">
   ${Object.entries(list)
     .map(
       ([category, blocks]) =>
         `<div class="gjs-trt-trait__wrp gjs-trt-trait__wrp-id" style="max-width: 300px;">
-          <form class="form-category gjs-trt-trait gjs-trt-trait--text">
+          <div class="gjs-trt-trait gjs-trt-trait--text">
             <div class="gjs-label-wrp">
               <div class="gjs-label" title="Category">Category</div>
             </div>
             <div class="gjs-field-wrp gjs-field-wrp--text">
               <div class="gjs-field gjs-field-text">
-                <input type="hidden" name="oldName" value="${category}"/>
-                <input name="newName" class="category-input" type="text" value="${category}"/>
+                <input type="hidden" name="${category}OldName" value="${category}"/>
+                <input type="text" name="${category}NewName" class="category-input" value="${category}"/>
               </div>
             </div>
-            <button type="submit" class="gjs-btn-prim save-category-button" data-category-id="${category}">Save</button>
-          </form>
+          </div>
         </div>
         <div class="gjs-sm-field gjs-sm-composite">
         <div class="gjs-sm-properties" style="display:block">
-          <ul class="gjs-fields" style="list-style:none; padding: 0">
+          <ul class="gjs-fields" style="flex-wrap: wrap; list-style:none; padding: 0">
           ${Object.entries(blocks as any)
             .map(
               ([blockName]) =>
-                `<li>
+                `<li style="display: flex" data-block-item="${blockName}">
                   <div class="gjs-trt-trait__wrp gjs-trt-trait__wrp-id">
-                    <form class="form-block gjs-trt-trait gjs-trt-trait--text" style="width:100%">
+                    <div class="gjs-trt-trait gjs-trt-trait--text" style="width:100%; box-sizing: border-box;">
                       <div class="gjs-label-wrp">
                         <div class="gjs-label" title="Block">Block</div>
                       </div>
                       <div class="gjs-field-wrp gjs-field-wrp--text">
                         <div class="gjs-field gjs-field-text">
-                          <input name="oldName" type="hidden" value="${blockName}"/>
-                          <input name="newName" class="name-input" type="text" value="${blockName}"/>
+                          <input type="hidden" name="${blockName}OldName" value="${blockName}"/>
+                          <input type="text" name="${blockName}NewName" class="name-input" value="${blockName}"/>
                         </div>
                       </div>
-                      <button type="submit" class="gjs-btn-prim save-button" data-block-id="${blockName}">Save</button>
                       <button type="button" class="gjs-btn-prim delete-button" data-block-id="${blockName}">Delete</button>
-                    </form>
+                    </div>
                   </div>
                 </li>`
             )
@@ -153,7 +151,8 @@ export function customEditModal(editor: Editor) {
       </div>`
     )
     .join("  ")}
-  </div>
+    <button type="submit" class="gjs-btn-prim save-all-button" form="saveAllForm">Save</button>
+  </form>
 </div>`;
   const myModal = Modal.open({
     content,
@@ -164,66 +163,52 @@ export function customEditModal(editor: Editor) {
 
 
   setTimeout(() => {
-    const formBlock = document.querySelectorAll(".form-block");
-    formBlock.forEach((elem) => {
-      elem.addEventListener("submit", handleSubmit);
-    });
     const deleteButton = document.querySelectorAll(".delete-button");
     deleteButton.forEach(elem => {
       elem.addEventListener("click", handleDelete);
     });
-    const formCategory = document.querySelectorAll(".form-category");
-    formCategory.forEach((elem) => {
-      elem.addEventListener("submit", handleSaveCategory);
-    });
+    document.getElementById('saveAllForm')?.addEventListener('submit', handleSaveAll);
   }, 1)
   myModal.onceClose(() => {
-    const submitButton = document.querySelectorAll(".save-button");
-    submitButton.forEach((elem) => {
-      elem.removeEventListener("click", handleSubmit);
-    });
     const deleteButton = document.querySelectorAll(".delete-button");
-    deleteButton.forEach(elem => {
+    deleteButton.forEach((elem) => {
       elem.removeEventListener("click", handleDelete);
     });
-    const saveCategoryButton = document.querySelectorAll(".save-category-button");
-    saveCategoryButton.forEach(elem => {
-      elem.removeEventListener("click", handleSaveCategory);
-    });
+    document
+      .getElementById("saveAllForm")
+      ?.removeEventListener("submit", handleSaveAll);
   });
 
-  function handleSubmit(e: any) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const oldName = formData.get("oldName") as string;
-    const newName = formData.get("newName") as string;
-
-    if (!oldName || !newName) return;
-
-    const block = BlockManager.get(oldName);
-    block.set('id', newName)
-    block.set('label', newName)
-    userBlocks.updateBlock(oldName, newName);
-    editor.store()
-  }
-
-  function handleDelete(e: any) {
+  async function handleDelete(e: any) {
     e.preventDefault();
     const blockId = e.target.dataset.blockId;
+    const blockElement = document.querySelector(`[data-block-item="${blockId}"]`);
+    if (!confirm("Are you sure you want to delete this block?")) return;
     BlockManager.remove(blockId)
     userBlocks.removeBlock(blockId)
-    editor.store()
+    if (blockElement) blockElement.remove();
+    await editor.store()
   }
 
-  function handleSaveCategory(e: any) {
+  async function handleSaveAll(e: any) {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const oldName = formData.get("oldName") as string;
-    const newName = formData.get("newName") as string;
+    var formData = new FormData(e.target);
 
-    if (!oldName || !newName) return;
+    Object.entries(userBlocks.blocks).forEach(([category, blocks]) => {
+      const oldCategory = formData.get(`${category}OldName`) as string;
+      const newCategory = formData.get(`${category}NewName`) as string;
+      if (oldCategory !== newCategory) {
+        userBlocks.updateBlockCategory(oldCategory, newCategory);
+      }
 
-    userBlocks.updateBlockCategory(oldName, newName);
-    editor.store()
+      Object.entries(blocks).forEach(([blockName, block]) => {
+        const oldName = formData.get(`${blockName}OldName`) as string;
+        const newName = formData.get(`${blockName}NewName`) as string;
+        if (oldName === newName) return;
+        userBlocks.updateBlock(oldName, newName);
+      });
+    });
+    await editor.store();
+    myModal.close();
   }
 }
