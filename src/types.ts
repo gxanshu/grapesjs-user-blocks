@@ -4,7 +4,7 @@ export interface onSubmitProps {
     selectedComponent: Component | undefined;
     editor: Editor;
     details: {
-      name: string;
+      id: string;
       category: string
     }
     // ModalModule
