@@ -7,10 +7,14 @@ type AddBlock = {
   cssCode: string
 }
 
-let _blocks: { [category: string]: { [id: string]: Block } } = {};
+let instance: UserBlocks;
 
-export class UserBlocks {
+class UserBlocks {
+  private _blocks: { [category: string]: { [id: string]: Block } } = {};
   constructor(public editor: Editor) {
+    if (instance) {
+      throw new Error("New instance cannot be created!");
+    }
     this.editor = editor;
   }
 
@@ -18,20 +22,20 @@ export class UserBlocks {
     const { userBlocks } = await this.editor.load();
     if (!userBlocks) return;
 
-    _blocks = userBlocks;
+    this._blocks = userBlocks;
 
-    return _blocks;
+    return this._blocks;
   }
   get blocks() {
-    return _blocks;
+    return this._blocks;
   }
   addBlock({ details, htmlCode, cssCode }: AddBlock) {
-    if (!_blocks[details.category]) _blocks[details.category] = {};
-    _blocks[details.category][details.id] = { htmlCode, cssCode };
+    if (!this._blocks[details.category]) this._blocks[details.category] = {};
+    this._blocks[details.category][details.id] = { htmlCode, cssCode };
   }
   updateBlock(oldBlockId: string, newBlockId: string) {
-    for (let category in _blocks) {
-      let blocks = _blocks[category];
+    for (let category in this._blocks) {
+      let blocks = this._blocks[category];
       if (blocks[oldBlockId]) {
         blocks[newBlockId] = blocks[oldBlockId];
         delete blocks[oldBlockId];
@@ -40,8 +44,8 @@ export class UserBlocks {
     }
   }
   removeBlock(blockId: string) {
-    for (let category in _blocks) {
-      let blocks = _blocks[category];
+    for (let category in this._blocks) {
+      let blocks = this._blocks[category];
       if (blocks[blockId]) {
         delete blocks[blockId];
         break;
@@ -49,9 +53,14 @@ export class UserBlocks {
     }
   }
   updateBlockCategory(oldCategory: string, newCategory: string) {
-    if (_blocks[oldCategory]) {
-      _blocks[newCategory] = _blocks[oldCategory];
-      delete _blocks[oldCategory];
+    if (this._blocks[oldCategory]) {
+      this._blocks[newCategory] = this._blocks[oldCategory];
+      delete this._blocks[oldCategory];
     }
   }
+}
+
+export function getInstance(editor: Editor) {
+  if (!instance) instance = new UserBlocks(editor);
+  return instance;
 }

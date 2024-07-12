@@ -2,7 +2,7 @@ import { Editor } from "grapesjs";
 import {
   onSubmitProps,
 } from "./types";
-import { UserBlocks } from "./UserBlocks"
+import { getInstance } from "./UserBlocks"
 
 /**
  * handle onSubmit button generate HTML & CSS of selected component and save them in local
@@ -25,7 +25,7 @@ export function onSubmit({
   });
 
 
-  const userBlocks = new UserBlocks(editor);
+  const userBlocks = getInstance(editor);
   userBlocks.addBlock({ details, htmlCode, cssCode });
   editor.store();
   BlockManager.add(details.id, {
@@ -46,7 +46,7 @@ export function onSubmit({
  */
 export function loadAllBlocksInBlockManager(editor: Editor) {
   // updating BlockManager
-  const userBlocks = new UserBlocks(editor)
+  const userBlocks = getInstance(editor)
   const BlockManager = editor.BlockManager
   let allBlocks = userBlocks.blocks;
   // Iterate over the allBlocks object

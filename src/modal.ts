@@ -1,7 +1,7 @@
 import { Editor } from "grapesjs";
 import html2canvas from "html2canvas";
 import { onSubmit } from "./function";
-import { UserBlocks } from "./UserBlocks"
+import { getInstance } from "./UserBlocks"
 
 export function customSaveModal(editor: Editor): any {
   const selectedComponent = editor.getSelected();
@@ -102,7 +102,7 @@ export function customSaveModal(editor: Editor): any {
 export function customEditModal(editor: Editor) {
   const Modal = editor.Modal;
   const BlockManager = editor.Blocks;
-  const userBlocks = new UserBlocks(editor)
+  const userBlocks = getInstance(editor)
   const list = userBlocks.blocks;
   const content = `<div class="modal">
   <form id="saveAllForm" class="modal-content gjs-sm-properties" style="display: block">
@@ -194,18 +194,25 @@ export function customEditModal(editor: Editor) {
     e.preventDefault();
     var formData = new FormData(e.target);
 
+    const categories = BlockManager.getCategories();
     Object.entries(userBlocks.blocks).forEach(([category, blocks]) => {
       const oldCategory = formData.get(`${category}OldName`) as string;
       const newCategory = formData.get(`${category}NewName`) as string;
       if (oldCategory !== newCategory) {
         userBlocks.updateBlockCategory(oldCategory, newCategory);
+        const category = categories.get(oldCategory);
+        category.set("label", newCategory);
+        category.set("id", newCategory);
       }
 
-      Object.entries(blocks).forEach(([blockName, block]) => {
+      Object.entries(blocks).forEach(([blockName]) => {
         const oldName = formData.get(`${blockName}OldName`) as string;
         const newName = formData.get(`${blockName}NewName`) as string;
         if (oldName === newName) return;
         userBlocks.updateBlock(oldName, newName);
+        const block = BlockManager.get(oldName);
+        block.set("label", newName);
+        block.set("id", newName);
       });
     });
     await editor.store();

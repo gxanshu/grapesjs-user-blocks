@@ -1,10 +1,10 @@
 import { Editor } from "grapesjs";
-import { UserBlocks } from "./UserBlocks";
+import { getInstance } from "./UserBlocks";
 
 export default (editor: Editor) => {
   const Storage = editor.StorageManager;
   const currentStorage = Storage.getCurrentStorage();
-  const userBlocks = new UserBlocks(editor);
+  const userBlocks = getInstance(editor);
 
   if(!currentStorage) return;
 

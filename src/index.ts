@@ -2,12 +2,12 @@ import { Editor } from 'grapesjs'
 import { customSaveModal, customEditModal } from "./modal";
 import { loadAllBlocksInBlockManager } from "./function";
 import storage from './storage'
-import { UserBlocks } from './UserBlocks'
+import { getInstance } from './UserBlocks'
 
 export default (editor: Editor): void => {
   const dc = editor.DomComponents
   const Commands = editor.Commands
-  const userBlocks = new UserBlocks(editor)
+  const userBlocks = getInstance(editor)
   const commandAddBlock = 'block-adder'
   const commandEditBlocks = 'blocks-editor'
   const htmlLabel = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
