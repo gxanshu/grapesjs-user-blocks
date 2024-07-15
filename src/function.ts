@@ -1,8 +1,16 @@
-import { Editor } from "grapesjs";
-import {
-  onSubmitProps,
-} from "./types";
+import { Editor, Component } from "grapesjs";
 import { getInstance } from "./UserBlocks"
+
+interface onSubmitProps {
+  selectedComponent: Component | undefined;
+  editor: Editor;
+  details: {
+    id: string;
+    label: string;
+    category: string;
+  };
+  saveModal: any;
+}
 
 /**
  * handle onSubmit button generate HTML & CSS of selected component and save them in local
@@ -10,13 +18,13 @@ import { getInstance } from "./UserBlocks"
  * @param selectedComponent selected component
  * @param editor grapesjs editor
  * @param details name and category of component
- * @param myModal modal for user blocks
+ * @param saveModal modal for user blocks
  */
 export function onSubmit({
   selectedComponent,
   editor,
   details,
-  myModal,
+  saveModal,
 }: onSubmitProps) {
   const BlockManager = editor.Blocks; // `Blocks` is an alias of `BlockManager`
   const htmlCode = selectedComponent?.toHTML() as string;
@@ -24,12 +32,11 @@ export function onSubmit({
     cssc: editor.CssComposer,
   });
 
-
   const userBlocks = getInstance(editor);
   userBlocks.addBlock({ details, htmlCode, cssCode });
   editor.store();
   BlockManager.add(details.id, {
-    label: details.id,
+    label: details.label,
     category: details.category,
     content: `${htmlCode}
       <style>
@@ -37,7 +44,7 @@ export function onSubmit({
       </style>`,
   });
 
-  myModal.close();
+  saveModal.close();
 }
 
 /**
@@ -52,17 +59,18 @@ export function loadAllBlocksInBlockManager(editor: Editor) {
   // Iterate over the allBlocks object
   for (let category in allBlocks) {
     let blocks = allBlocks[category];
-    for (let blockID in blocks) {
-      let block = blocks[blockID];
+    for (let blockId in blocks) {
+      let block = blocks[blockId];
       let details = {
-        id: blockID,
+        id: blockId,
+        label: block.label,
         category: category,
       };
       let htmlCode = block.htmlCode;
       let cssCode = block.cssCode;
       BlockManager.add(details.id, {
         // Your block properties...
-        label: details.id,
+        label: details.label,
         category: details.category,
         content: `${htmlCode}
       <style>
@@ -73,3 +81,9 @@ export function loadAllBlocksInBlockManager(editor: Editor) {
   }
   BlockManager.render();
 }
+
+export function uniqueId() {
+  const dateString = Date.now().toString(36);
+  const randomness = Math.random().toString(36).slice(2);
+  return dateString + randomness;
+};

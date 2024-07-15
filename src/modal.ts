@@ -1,9 +1,9 @@
 import { Editor } from "grapesjs";
 import html2canvas from "html2canvas";
-import { onSubmit } from "./function";
+import { onSubmit, uniqueId } from "./function";
 import { getInstance } from "./UserBlocks"
 
-export function customSaveModal(editor: Editor): any {
+export function customSaveModal(editor: Editor, opts: any): any {
   const selectedComponent = editor.getSelected();
   // Get the Modal module
   const Modal = editor.Modal;
@@ -11,27 +11,26 @@ export function customSaveModal(editor: Editor): any {
   // Define the content of the modal
   const content = `
 <div class="modal">
-  <div class="modal-content">
+  <div class="modal-content gjs-sm-properties" style="display: block">
     <div>
-      <p>Details</p>
-      <div class="container form-row">
+      <div style="margin-bottom: 10px; display: flex; gap: 10px;">
         <div class="gjs-field-wrp gjs-field-wrp--text">
           <div class="gjs-field gjs-field-text">
-            <input class="form-column" type="text" id="component-name" name="component-name" placeholder="name">
+            <input class="form-column" type="text" id="component-name" name="component-name" placeholder="${opts.blockLabel}">
           </div>
         </div>
         <div class="gjs-field-wrp gjs-field-wrp--text">
           <div class="gjs-field gjs-field-text">
-            <input class="form-column" type="text" id="component-category" name="component-category" placeholder="category">
+            <input class="form-column" type="text" id="component-category" name="component-category" placeholder="${opts.categoryLabel}">
           </div>
         </div>
       </div>
-      <div class="container image-container">
-        <div id="screenShotCanvas"></div>
+      <div style="margin-bottom: 10px;">
+        <div id="screenShotCanvas" style="max-height: 300px; overflow: auto;"></div>
       </div>
-      <div class="container button-container">
-        <button id="submit" class="gjs-btn-prim save-button">Save</button>
-        <button id="reset" class="gjs-btn-prim reset-button">Reset</button>
+      <div>
+        <button id="submit" class="gjs-btn-prim save-button">${opts.buttonSaveLabel}</button>
+        <button id="reset" class="gjs-btn-prim reset-button">${opts.buttonResetLabel}</button>
       </div>
     </div>
   </div>
@@ -39,9 +38,9 @@ export function customSaveModal(editor: Editor): any {
 
 
   // Create the modal
-  const myModal = Modal.open({
+  const saveModal = Modal.open({
     content,
-    title: "Save",
+    title: opts.modalSaveTitle,
     width: "400px",
     height: "auto",
     closedOnEscape: true,
@@ -54,9 +53,9 @@ export function customSaveModal(editor: Editor): any {
   const resetButton = document.getElementById("reset") as HTMLButtonElement;
   resetButton?.addEventListener("click", handleReset);
 
-  myModal.onceClose(() => {
-    submitButton?.removeEventListener('click', handleSubmit);
-    resetButton?.removeEventListener('click', handleReset);
+  saveModal.onceClose(() => {
+    submitButton?.removeEventListener("click", handleSubmit);
+    resetButton?.removeEventListener("click", handleReset);
   });
 
   /* functioning of modal */
@@ -77,11 +76,12 @@ export function customSaveModal(editor: Editor): any {
     ) as HTMLInputElement;
 
     const details = {
-      id: nameBlock.value,
+      id: uniqueId(),
+      label: nameBlock.value,
       category: categoryBlock.value,
     };
 
-    onSubmit({ selectedComponent, editor, details, myModal });
+    onSubmit({ selectedComponent, editor, details, saveModal });
   }
 
   function handleReset() {
@@ -96,10 +96,10 @@ export function customSaveModal(editor: Editor): any {
     categoryBlock.value = "";
   }
 
-  return myModal;
+  return saveModal;
 }
 
-export function customEditModal(editor: Editor) {
+export function customEditModal(editor: Editor, opts: any) {
   const Modal = editor.Modal;
   const BlockManager = editor.Blocks;
   const userBlocks = getInstance(editor)
@@ -109,38 +109,38 @@ export function customEditModal(editor: Editor) {
   ${Object.entries(list)
     .map(
       ([category, blocks]) =>
-        `<div class="gjs-trt-trait__wrp gjs-trt-trait__wrp-id" style="max-width: 300px;">
+        `<div class="gjs-trt-trait__wrp gjs-trt-trait__wrp-id" style="margin-bottom: 10px; max-width: 300px;">
           <div class="gjs-trt-trait gjs-trt-trait--text">
             <div class="gjs-label-wrp">
-              <div class="gjs-label" title="Category">Category</div>
+              <div class="gjs-label" title="${opts.categoryLabel}">${opts.categoryLabel}</div>
             </div>
             <div class="gjs-field-wrp gjs-field-wrp--text">
               <div class="gjs-field gjs-field-text">
                 <input type="hidden" name="${category}OldName" value="${category}"/>
-                <input type="text" name="${category}NewName" class="category-input" value="${category}"/>
+                <input type="text" name="${category}NewName" class="category-input" value="${category}" placeholder="${opts.categoryLabel}"/>
               </div>
             </div>
           </div>
         </div>
-        <div class="gjs-sm-field gjs-sm-composite">
+        <div class="gjs-sm-field gjs-sm-composite" style="margin-bottom: 10px;">
         <div class="gjs-sm-properties" style="display:block">
           <ul class="gjs-fields" style="flex-wrap: wrap; list-style:none; padding: 0">
-          ${Object.entries(blocks as any)
+          ${Object.entries(blocks)
             .map(
-              ([blockName]) =>
-                `<li style="display: flex" data-block-item="${blockName}">
+              ([blockId]) =>
+                `<li style="display: flex" data-block-item="${blockId}">
                   <div class="gjs-trt-trait__wrp gjs-trt-trait__wrp-id">
                     <div class="gjs-trt-trait gjs-trt-trait--text" style="width:100%; box-sizing: border-box;">
                       <div class="gjs-label-wrp">
-                        <div class="gjs-label" title="Block">Block</div>
+                        <div class="gjs-label" title="${opts.blockLabel}">${opts.blockLabel}</div>
                       </div>
                       <div class="gjs-field-wrp gjs-field-wrp--text">
                         <div class="gjs-field gjs-field-text">
-                          <input type="hidden" name="${blockName}OldName" value="${blockName}"/>
-                          <input type="text" name="${blockName}NewName" class="name-input" value="${blockName}"/>
+                          <input type="hidden" name="${blockId}Id" value="${blockId}"/>
+                          <input type="text" name="${blockId}NewName" class="name-input" value="${blocks[blockId].label}" placeholder="${opts.blockLabel}"/>
                         </div>
                       </div>
-                      <button type="button" class="gjs-btn-prim delete-button" data-block-id="${blockName}">Delete</button>
+                      <button type="button" class="gjs-btn-prim delete-button" data-block-id="${blockId}">${opts.buttonDeleteLabel}</button>
                     </div>
                   </div>
                 </li>`
@@ -151,12 +151,12 @@ export function customEditModal(editor: Editor) {
       </div>`
     )
     .join("  ")}
-    <button type="submit" class="gjs-btn-prim save-all-button" form="saveAllForm">Save</button>
+    <button type="submit" class="gjs-btn-prim save-all-button" form="saveAllForm">${opts.buttonSaveLabel}</button>
   </form>
 </div>`;
-  const myModal = Modal.open({
+  const editModal = Modal.open({
     content,
-    title: "Edit",
+    title: opts.modalEditTitle,
     closedOnEscape: true,
     closedOnClickOutside: true,
   });
@@ -169,7 +169,7 @@ export function customEditModal(editor: Editor) {
     });
     document.getElementById('saveAllForm')?.addEventListener('submit', handleSaveAll);
   }, 1)
-  myModal.onceClose(() => {
+  editModal.onceClose(() => {
     const deleteButton = document.querySelectorAll(".delete-button");
     deleteButton.forEach((elem) => {
       elem.removeEventListener("click", handleDelete);
@@ -183,7 +183,7 @@ export function customEditModal(editor: Editor) {
     e.preventDefault();
     const blockId = e.target.dataset.blockId;
     const blockElement = document.querySelector(`[data-block-item="${blockId}"]`);
-    if (!confirm("Are you sure you want to delete this block?")) return;
+    if (!confirm(opts.messageDeleteBlock)) return;
     BlockManager.remove(blockId)
     userBlocks.removeBlock(blockId)
     if (blockElement) blockElement.remove();
@@ -192,7 +192,7 @@ export function customEditModal(editor: Editor) {
 
   async function handleSaveAll(e: any) {
     e.preventDefault();
-    var formData = new FormData(e.target);
+    const formData = new FormData(e.target);
 
     const categories = BlockManager.getCategories();
     Object.entries(userBlocks.blocks).forEach(([category, blocks]) => {
@@ -205,17 +205,14 @@ export function customEditModal(editor: Editor) {
         category.set("id", newCategory);
       }
 
-      Object.entries(blocks).forEach(([blockName]) => {
-        const oldName = formData.get(`${blockName}OldName`) as string;
-        const newName = formData.get(`${blockName}NewName`) as string;
-        if (oldName === newName) return;
-        userBlocks.updateBlock(oldName, newName);
-        const block = BlockManager.get(oldName);
+      Object.entries(blocks).forEach(([blockId]) => {
+        const newName = formData.get(`${blockId}NewName`) as string;
+        userBlocks.updateBlock(blockId, newName);
+        const block = BlockManager.get(blockId);
         block.set("label", newName);
-        block.set("id", newName);
       });
     });
     await editor.store();
-    myModal.close();
+    editModal.close();
   }
 }

@@ -1,8 +1,8 @@
 import { Editor } from "grapesjs";
 
-type Block = { cssCode: string; htmlCode: string };
+type Block = { label: string; cssCode: string; htmlCode: string };
 type AddBlock = {
-  details: { id: string, category: string },
+  details: { id: string, label: string; category: string },
   htmlCode: string,
   cssCode: string
 }
@@ -31,14 +31,13 @@ class UserBlocks {
   }
   addBlock({ details, htmlCode, cssCode }: AddBlock) {
     if (!this._blocks[details.category]) this._blocks[details.category] = {};
-    this._blocks[details.category][details.id] = { htmlCode, cssCode };
+    this._blocks[details.category][details.id] = { label: details.label, htmlCode, cssCode };
   }
-  updateBlock(oldBlockId: string, newBlockId: string) {
+  updateBlock(blockId: string, label: string) {
     for (let category in this._blocks) {
       let blocks = this._blocks[category];
-      if (blocks[oldBlockId]) {
-        blocks[newBlockId] = blocks[oldBlockId];
-        delete blocks[oldBlockId];
+      if (blocks[blockId]) {
+        blocks[blockId] = { ...blocks[blockId], label };
         break;
       }
     }
