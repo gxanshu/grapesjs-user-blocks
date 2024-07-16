@@ -29,6 +29,9 @@ class UserBlocks {
   get blocks() {
     return this._blocks;
   }
+  get categories() {
+    return Object.keys(this._blocks);
+  }
   addBlock({ details, htmlCode, cssCode }: AddBlock) {
     if (!this._blocks[details.category]) this._blocks[details.category] = {};
     this._blocks[details.category][details.id] = { label: details.label, htmlCode, cssCode };

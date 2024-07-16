@@ -14,7 +14,8 @@ export type PluginOptions = {
   modalSaveTitle: string;
   modalEditTitle: string;
   messageDeleteBlock: string;
-}
+  newCategoryLabel: string;
+};
 
 export default (editor: Editor, opts = {}) => {
   const options: PluginOptions = {
@@ -27,6 +28,7 @@ export default (editor: Editor, opts = {}) => {
     modalSaveTitle: "Save",
     modalEditTitle: "Edit",
     messageDeleteBlock: "Are you sure you want to delete this block?",
+    newCategoryLabel: "New Category",
     ...opts
   };
   const dc = editor.DomComponents;

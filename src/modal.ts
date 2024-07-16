@@ -4,6 +4,7 @@ import { onSubmit, uniqueId } from "./function";
 import { getInstance } from "./UserBlocks"
 
 export function customSaveModal(editor: Editor, opts: any): any {
+  const userBlocks = getInstance(editor);
   const selectedComponent = editor.getSelected();
   // Get the Modal module
   const Modal = editor.Modal;
@@ -16,12 +17,31 @@ export function customSaveModal(editor: Editor, opts: any): any {
       <div style="margin-bottom: 10px; display: flex; gap: 10px;">
         <div class="gjs-field-wrp gjs-field-wrp--text">
           <div class="gjs-field gjs-field-text">
-            <input class="form-column" type="text" id="component-name" name="component-name" placeholder="${opts.blockLabel}">
+            <input type="text" id="component-name" name="component-name" placeholder="${
+              opts.blockLabel
+            }">
+          </div>
+        </div>
+        <div class="gjs-label-wrp">
+          <div class="gjs-field gjs-field-select">
+            <span>
+              <select id="component-category" name="component-category">
+                <option value="">Select category</option>
+                ${userBlocks.categories
+                  .map((cat) => `<option value="${cat}">${cat}</option>`)
+                  .join("")}
+              </select>
+            </span>
+            <div class="gjs-sel-arrow">
+              <div class="gjs-d-s-arrow"></div>
+            </div>
           </div>
         </div>
         <div class="gjs-field-wrp gjs-field-wrp--text">
           <div class="gjs-field gjs-field-text">
-            <input class="form-column" type="text" id="component-category" name="component-category" placeholder="${opts.categoryLabel}">
+            <input type="text" id="component-new-category" name="component-new-category" placeholder="${
+              opts.newCategoryLabel
+            }">
           </div>
         </div>
       </div>
@@ -29,8 +49,12 @@ export function customSaveModal(editor: Editor, opts: any): any {
         <div id="screenShotCanvas" style="max-height: 300px; overflow: auto;"></div>
       </div>
       <div>
-        <button id="submit" class="gjs-btn-prim save-button">${opts.buttonSaveLabel}</button>
-        <button id="reset" class="gjs-btn-prim reset-button">${opts.buttonResetLabel}</button>
+        <button id="submit" class="gjs-btn-prim save-button">${
+          opts.buttonSaveLabel
+        }</button>
+        <button id="reset" class="gjs-btn-prim reset-button">${
+          opts.buttonResetLabel
+        }</button>
       </div>
     </div>
   </div>
@@ -74,11 +98,13 @@ export function customSaveModal(editor: Editor, opts: any): any {
     const categoryBlock = document.getElementById(
       "component-category"
     ) as HTMLInputElement;
+    const newCategoryBlock = document.getElementById("component-new-category") as HTMLSelectElement;
+    const categorySelected = newCategoryBlock.value.trim() || categoryBlock.value.trim();
 
     const details = {
       id: uniqueId(),
       label: nameBlock.value,
-      category: categoryBlock.value,
+      category: categorySelected,
     };
 
     onSubmit({ selectedComponent, editor, details, saveModal });
@@ -128,7 +154,7 @@ export function customEditModal(editor: Editor, opts: any) {
           ${Object.entries(blocks)
             .map(
               ([blockId]) =>
-                `<li style="display: flex" data-block-item="${blockId}">
+                `<li style="display: flex; width: 50%" data-block-item="${blockId}">
                   <div class="gjs-trt-trait__wrp gjs-trt-trait__wrp-id">
                     <div class="gjs-trt-trait gjs-trt-trait--text" style="width:100%; box-sizing: border-box;">
                       <div class="gjs-label-wrp">
@@ -196,8 +222,8 @@ export function customEditModal(editor: Editor, opts: any) {
 
     const categories = BlockManager.getCategories();
     Object.entries(userBlocks.blocks).forEach(([category, blocks]) => {
-      const oldCategory = formData.get(`${category}OldName`) as string;
-      const newCategory = formData.get(`${category}NewName`) as string;
+      const oldCategory = (formData.get(`${category}OldName`) as string).trim();
+      const newCategory = (formData.get(`${category}NewName`) as string).trim();
       if (oldCategory !== newCategory) {
         userBlocks.updateBlockCategory(oldCategory, newCategory);
         const category = categories.get(oldCategory);
@@ -206,7 +232,7 @@ export function customEditModal(editor: Editor, opts: any) {
       }
 
       Object.entries(blocks).forEach(([blockId]) => {
-        const newName = formData.get(`${blockId}NewName`) as string;
+        const newName = (formData.get(`${blockId}NewName`) as string).trim();
         userBlocks.updateBlock(blockId, newName);
         const block = BlockManager.get(blockId);
         block.set("label", newName);
