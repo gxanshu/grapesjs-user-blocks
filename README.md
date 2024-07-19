@@ -6,7 +6,6 @@
 ### HTML
 ```html
 <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet">
-<link href="https://unpkg.com/grapesjs-user-blocks/dist/grapesjs-user-blocks.min.css" rel="stylesheet">
 <script src="https://unpkg.com/grapesjs"></script>
 <script src="https://unpkg.com/grapesjs-user-blocks"></script>
 
@@ -53,7 +52,6 @@ body, html {
 Directly in the browser
 ```html
 <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
-<link href="https://unpkg.com/grapesjs-user-blocks/dist/grapesjs-user-blocks.min.css" rel="stylesheet">
 <script src="https://unpkg.com/grapesjs"></script>
 <script src="path/to/grapesjs-user-blocks.min.js"></script>
 
@@ -72,7 +70,6 @@ Modern javascript
 ```js
 import grapesjs from 'grapesjs';
 import plugin from 'grapesjs-user-blocks';
-import 'grapesjs/dist/css/grapes.min.css';
 
 const editor = grapesjs.init({
   container : '#gjs',
