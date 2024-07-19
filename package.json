@@ -1,13 +1,13 @@
 {
   "name": "grapesjs-user-blocks",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Grapesjs User Blocks",
   "main": "dist/index.js",
   "homepage": "https://codenanshu.in/projects/grapesjs-user-blocks",
   "author": "gxanshu",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gxnanshu/grapesjs-user-blocks.git"
+    "url": "https://github.com/gxanshu/grapesjs-user-blocks.git"
   },
   "scripts": {
     "start": "grapesjs-cli serve",

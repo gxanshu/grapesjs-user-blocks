@@ -34,7 +34,7 @@ body, html {
 
 ## Summary
 
-* Plugin name: `grapesjs-user-blocks` super simple user block generator for grapesjs. it allow developers to store there components in localStorage and also in blockManager to use letter.
+* Plugin name: `grapesjs-user-blocks` super simple user block generator for grapesjs. it allow developers to store there components in Storage Manager and also in blockManager to use letter.
 
 ## Download
 
