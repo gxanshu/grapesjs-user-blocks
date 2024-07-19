@@ -19,7 +19,7 @@ class UserBlocks {
   }
 
   async loadBlocks() {
-    const { userBlocks } = await this.editor.load();
+    const { userBlocks } = await this.editor.load({});
     if (!userBlocks) return;
 
     this._blocks = userBlocks;

@@ -213,7 +213,7 @@ export function customEditModal(editor: Editor, opts: any) {
     BlockManager.remove(blockId)
     userBlocks.removeBlock(blockId)
     if (blockElement) blockElement.remove();
-    await editor.store()
+    await editor.store({})
   }
 
   async function handleSaveAll(e: any) {
@@ -238,7 +238,7 @@ export function customEditModal(editor: Editor, opts: any) {
         block.set("label", newName);
       });
     });
-    await editor.store();
+    await editor.store({});
     editModal.close();
   }
 }

@@ -34,7 +34,7 @@ export function onSubmit({
 
   const userBlocks = getInstance(editor);
   userBlocks.addBlock({ details, htmlCode, cssCode });
-  editor.store();
+  editor.store({});
   BlockManager.add(details.id, {
     label: details.label,
     category: details.category,
@@ -79,6 +79,7 @@ export function loadAllBlocksInBlockManager(editor: Editor) {
       });
     }
   }
+  // @ts-ignore by default render all global blocks
   BlockManager.render();
 }
 
