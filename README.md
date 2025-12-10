@@ -43,7 +43,7 @@ body, html {
 * NPM
   * `npm i grapesjs-user-blocks`
 * GIT
-  * `git clone https://github.com/gxnanshu/grapesjs-user-blocks.git`
+  * `git clone https://github.com/gxanshu/grapesjs-user-blocks.git`
 
 
 
@@ -92,7 +92,7 @@ const editor = grapesjs.init({
 Clone the repository
 
 ```sh
-$ git clone https://github.com/gxnanshu/grapesjs-user-blocks.git
+$ git clone https://github.com/gxanshu/grapesjs-user-blocks.git
 $ cd grapesjs-user-blocks
 ```
 
