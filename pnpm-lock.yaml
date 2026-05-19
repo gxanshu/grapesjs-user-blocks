@@ -2205,8 +2205,8 @@ packages:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
 
-  serialize-javascript@6.0.1:
-    resolution: {integrity: sha512-owoXEFjWRllis8/M1Q+Cw5k8ZH40e3zhp/ovX+Xr/vi1qj6QesbyXXViFbpNvWvPNAD62SutwEXavefrLJWj7w==}
+  serialize-javascript@6.0.2:
+    resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
 
   serve-index@1.9.1:
     resolution: {integrity: sha512-pXHfKNP4qujrtteMrSBb0rc8HJ9Ms/GrXwcUtUtD5s4ewDJI8bT3Cz2zTVRMKtri49pLx2e0Ya8ziP5Ya2pZZw==}
@@ -4981,7 +4981,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serialize-javascript@6.0.1:
+  serialize-javascript@6.0.2:
     dependencies:
       randombytes: 2.1.0
 
@@ -5136,7 +5136,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.18
       jest-worker: 27.5.1
       schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
+      serialize-javascript: 6.0.2
       terser: 5.19.0
       webpack: 5.88.1(webpack-cli@5.1.4)
 
