@@ -1884,8 +1884,8 @@ packages:
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
-  lodash.template@4.5.0:
-    resolution: {integrity: sha512-84vYFxIkmidUiFxidA/KjjH9pAycqW+h980j7Fuz5qxRtO9pgB7MDFTdys1N7A5mcucRiDyEq4fusljItR1T/A==}
+  lodash.template@4.18.1:
+    resolution: {integrity: sha512-5urZrLnV/VD6zHK5KsVtZgt7H19v51mIzoS0aBNH8yp3I8tbswrEjOABOPY8m8uB7NuibubLrMX+Y0PXsU9X+w==}
     deprecated: This package is deprecated. Use https://socket.dev/npm/package/eta instead.
 
   lodash.templatesettings@4.2.0:
@@ -4503,7 +4503,7 @@ snapshots:
       html-webpack-plugin: 5.5.3(webpack@5.88.1(webpack-cli@5.1.4))
       inquirer: 8.2.5
       listr: 0.14.3
-      lodash.template: 4.5.0
+      lodash.template: 4.18.1
       rimraf: 4.4.1
       spdx-license-list: 6.6.0
       ts-loader: 9.4.4(typescript@4.9.5)(webpack@5.88.1(webpack-cli@5.1.4))
@@ -4830,7 +4830,7 @@ snapshots:
 
   lodash.debounce@4.0.8: {}
 
-  lodash.template@4.5.0:
+  lodash.template@4.18.1:
     dependencies:
       lodash._reinterpolate: 3.0.0
       lodash.templatesettings: 4.2.0
